@@ -1,0 +1,68 @@
+PRAGMA foreign_keys = ON;
+
+-- Remove old tables
+DROP TABLE IF EXISTS GroupMember;
+DROP TABLE IF EXISTS ProjectGroup;
+DROP TABLE IF EXISTS SignUp;
+DROP TABLE IF EXISTS course;
+
+-- Create course table
+CREATE TABLE course (
+    name TEXT PRIMARY KEY,
+    ects INTEGER
+);
+
+-- Create SignUp table
+CREATE TABLE SignUp (
+    StudentName TEXT,
+    CourseName TEXT,
+    FOREIGN KEY (CourseName) REFERENCES course(name)
+);
+
+-- Create ProjectGroup table
+CREATE TABLE ProjectGroup (
+    title TEXT PRIMARY KEY,
+    supervisor TEXT
+);
+
+-- Create GroupMember table
+CREATE TABLE GroupMember (
+    studentName TEXT,
+    groupTitle TEXT,
+    FOREIGN KEY (groupTitle) REFERENCES ProjectGroup(title)
+);
+
+-- Insert courses
+INSERT INTO course (name, ects)
+VALUES
+('Software Development', 10),
+('Basic project 1 in natural science', 10),
+('Subject module in computer world', 5);
+
+-- Insert signups
+INSERT INTO SignUp (StudentName, CourseName)
+VALUES
+('Alice', 'Software Development'),
+('Bob', 'Software Development'),
+('Charlie', 'Basic project 1 in natural science');
+
+-- Query 1: number of students per activity
+SELECT
+    course.name,
+    course.ects,
+    COUNT(SignUp.StudentName) AS NumberOfStudents
+FROM course
+LEFT JOIN SignUp ON course.name = SignUp.CourseName
+GROUP BY course.name, course.ects;
+
+-- View all courses
+SELECT * FROM course;
+
+-- View all signups
+SELECT * FROM SignUp;
+
+-- View all project groups
+SELECT * FROM ProjectGroup;
+
+-- View all group members
+SELECT * FROM GroupMember;
